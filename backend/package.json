@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.4",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0",
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true,
+    "mongodb-memory-server@11.2.0": true,
+    "unrs-resolver@1.12.2": true
+  }
+}

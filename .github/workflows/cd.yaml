@@ -1,0 +1,65 @@
+name: cd
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: google-github-actions/auth@v2
+        with:
+          service_account: ${{ secrets.GOOGLECLOUD_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GOOGLECLOUD_CREDENTIALS }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/blogbackend:latest
+
+      - id: deploy-backend
+        name: Deploy backend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: blog-backend
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blogbackend:latest
+          region: ${{ secrets.GOOGLECLOUD_REGION }}
+          env_vars: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+
+      # The backend URL is only known after the deploy above, and Vite bakes it
+      # into the bundle at build time — hence build-args, and hence the frontend
+      # image being built after the backend is live.
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/blogfrontend:latest
+          build-args: |
+            VITE_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api/v1
+
+      - id: deploy-frontend
+        name: Deploy frontend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: blog-frontend
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blogfrontend:latest
+          region: ${{ secrets.GOOGLECLOUD_REGION }}
+          # nginx listens on 80; Cloud Run probes 8080 unless told otherwise.
+          flags: --port=80

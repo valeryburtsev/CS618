@@ -1,0 +1,4 @@
+{
+  "watch": ["src/**/*.js", ".env", "package-lock.json"],
+  "ignore": ["src/__tests__/**", "src/test/**"]
+}

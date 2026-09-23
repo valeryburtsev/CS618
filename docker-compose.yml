@@ -1,0 +1,50 @@
+services:
+  mongo:
+    image: mongo:8.2.12
+    container_name: cs618-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    container_name: cs618-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      # "mongo" is the service name above — inside the compose network that
+      # resolves to the database container, unlike localhost.
+      DATABASE_URL: mongodb://mongo:27017/blog
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Vite inlines this at build time and the browser is what fetches it,
+        # so it must be reachable from the host — NOT http://backend:3000.
+        VITE_BACKEND_URL: http://localhost:3000/api/v1
+    container_name: cs618-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  # Keeps using the volume the backend-only compose file created, so the
+  # posts already in the database survive the move to this file.
+  mongo-data:
+    name: backend_mongo-data
