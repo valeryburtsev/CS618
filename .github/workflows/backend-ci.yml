@@ -27,10 +27,6 @@ jobs:
           node-version: '26'
           cache: npm
           cache-dependency-path: backend/package-lock.json
-
-      # The suite starts a real mongod via mongodb-memory-server, which
-      # downloads the binary on first run. Key on the version pinned in
-      # src/test/globalSetup.js so a version bump fetches a fresh one.
       - name: Cache mongodb-memory-server binaries
         uses: actions/cache@v4
         with:
