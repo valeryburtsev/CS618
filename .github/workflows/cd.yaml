@@ -35,7 +35,7 @@ jobs:
         name: Deploy backend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: blog-backend
+          service: bsu-backend
           image: ${{ secrets.DOCKERHUB_USERNAME }}/bsu-backend:latest
           region: ${{ secrets.GOOGLECLOUD_REGION }}
           env_vars: |
@@ -55,7 +55,7 @@ jobs:
         name: Deploy frontend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: blog-frontend
+          service: bsu-frontend
           image: ${{ secrets.DOCKERHUB_USERNAME }}/bsu-frontend:latest
           region: ${{ secrets.GOOGLECLOUD_REGION }}
           flags: --port=80
