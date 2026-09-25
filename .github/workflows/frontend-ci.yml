@@ -36,5 +36,3 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          VITE_BACKEND_URL: http://localhost:3000/api/v1
