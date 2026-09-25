@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { postsRoutes } from './routes/posts.js'
+import { userRoutes } from './routes/users.js'
 
 const app = express()
 app.use(express.json())
@@ -13,5 +14,6 @@ app.get('/', (req, res) => {
 })
 
 postsRoutes(app)
+userRoutes(app)
 
 export { app }
