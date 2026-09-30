@@ -11,8 +11,18 @@ ARG VITE_BACKEND_URL=https://bsu-backend-1001832865956.europe-west1.run.app/api/
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 RUN npm run build
 
-FROM nginx:alpine AS final
+FROM node:26-alpine AS final
 
-COPY --from=build /build/dist /usr/share/nginx/html
+WORKDIR /app
 
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY --from=build /build/dist ./dist
+COPY server.js ./
+
+ENV NODE_ENV=production
+ENV PORT=80
 EXPOSE 80
+
+CMD ["node", "server.js"]
