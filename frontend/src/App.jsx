@@ -1,16 +1,24 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 import PropTypes from 'prop-types'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
 
 const queryClient = new QueryClient()
+const apolloClient = new ApolloClient({
+  link: new HttpLink({ uri: import.meta.env.VITE_GRAPHQL_URL }),
+  cache: new InMemoryCache(),
+})
 
 export function App({ children }) {
   return (
     <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthContextProvider>{children}</AuthContextProvider>
-      </QueryClientProvider>
+      <ApolloProvider client={apolloClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthContextProvider>{children}</AuthContextProvider>
+        </QueryClientProvider>
+      </ApolloProvider>
     </HelmetProvider>
   )
 }

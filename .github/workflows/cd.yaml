@@ -54,6 +54,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/bsu-frontend:${{ github.sha }}
           build-args: |
             VITE_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api/v1
+            VITE_GRAPHQL_URL=${{ steps.deploy-backend.outputs.url }}/graphql
 
       - id: deploy-frontend
         name: Deploy frontend

@@ -9,6 +9,8 @@ COPY . .
 
 ARG VITE_BACKEND_URL=https://bsu-backend-1001832865956.europe-west1.run.app/api/v1
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ARG VITE_GRAPHQL_URL=https://bsu-backend-1001832865956.europe-west1.run.app/graphql
+ENV VITE_GRAPHQL_URL=$VITE_GRAPHQL_URL
 RUN npm run build
 
 FROM node:26-alpine AS final
