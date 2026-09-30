@@ -1,28 +1,17 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import PropTypes from 'prop-types'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
-import { Blog } from './pages/Blog.jsx'
-import { Login } from './pages/Login.jsx'
-import { Signup } from './pages/Signup.jsx'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Blog />,
-  },
-  {
-    path: '/signup',
-    element: <Signup />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-])
+const queryClient = new QueryClient()
 
-export function App() {
+export function App({ children }) {
   return (
-    <AuthContextProvider>
-      <RouterProvider router={router} />
-    </AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>{children}</AuthContextProvider>
+    </QueryClientProvider>
   )
+}
+
+App.propTypes = {
+  children: PropTypes.element.isRequired,
 }
